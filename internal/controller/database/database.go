@@ -34,6 +34,7 @@ import (
 
 	"github.com/Sparkybeard/mbcp-workload-manager-cux-provider/apis/workloadmanager/v1alpha1"
 	apisv1alpha1 "github.com/Sparkybeard/mbcp-workload-manager-cux-provider/apis/v1alpha1"
+	wmclient "github.com/Sparkybeard/mbcp-workload-manager-cux-provider/internal/clients/workloadmanager"
 	"github.com/Sparkybeard/mbcp-workload-manager-cux-provider/internal/controller/features"
 )
 
@@ -52,6 +53,8 @@ type NoOpService struct{}
 var (
 	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
 )
+
+var basePath = "http://localhost:5000/api/rpc"
 
 // Setup adds a controller that reconciles MyType managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
@@ -113,10 +116,13 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 		return nil, errors.Wrap(err, errGetCreds)
 	}
 
-	svc, err := c.newServiceFn(data)
+	svc, err := wmclient.NewClient(wmclient.Options{ ApiUrl: basePath, Verbose: true})
+	wmclient.
 	if err != nil {
 		return nil, errors.Wrap(err, errNewClient)
 	}
+
+
 
 	return &external{service: svc}, nil
 }

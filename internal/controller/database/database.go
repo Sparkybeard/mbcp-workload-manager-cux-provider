@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package mytype
+package Database
 
 import (
 	"context"
@@ -55,7 +55,7 @@ var (
 
 // Setup adds a controller that reconciles MyType managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
-	name := managed.ControllerName(v1alpha1.MyTypeGroupKind)
+	name := managed.ControllerName(v1alpha1.DatabaseGroupKind)
 
 	cps := []managed.ConnectionPublisher{managed.NewAPISecretPublisher(mgr.GetClient(), mgr.GetScheme())}
 	if o.Features.Enabled(features.EnableAlphaExternalSecretStores) {
@@ -63,7 +63,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	}
 
 	r := managed.NewReconciler(mgr,
-		resource.ManagedKind(v1alpha1.MyTypeGroupVersionKind),
+		resource.ManagedKind(v1alpha1.DatabaseGroupVersionKind),
 		managed.WithExternalConnecter(&connector{
 			kube:         mgr.GetClient(),
 			usage:        resource.NewProviderConfigUsageTracker(mgr.GetClient(), &apisv1alpha1.ProviderConfigUsage{}),
@@ -75,7 +75,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		Named(name).
 		WithOptions(o.ForControllerRuntime()).
-		For(&v1alpha1.MyType{}).
+		For(&v1alpha1.Database{}).
 		Complete(ratelimiter.NewReconciler(name, r, o.GlobalRateLimiter))
 }
 
@@ -93,7 +93,7 @@ type connector struct {
 // 3. Getting the credentials specified by the ProviderConfig.
 // 4. Using the credentials to form a client.
 func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.ExternalClient, error) {
-	cr, ok := mg.(*v1alpha1.MyType)
+	cr, ok := mg.(*v1alpha1.Database)
 	if !ok {
 		return nil, errors.New(errNotMyType)
 	}
@@ -130,7 +130,7 @@ type external struct {
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
-	cr, ok := mg.(*v1alpha1.MyType)
+	cr, ok := mg.(*v1alpha1.Database)
 	if !ok {
 		return managed.ExternalObservation{}, errors.New(errNotMyType)
 	}
@@ -156,7 +156,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 }
 
 func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.ExternalCreation, error) {
-	cr, ok := mg.(*v1alpha1.MyType)
+	cr, ok := mg.(*v1alpha1.Database)
 	if !ok {
 		return managed.ExternalCreation{}, errors.New(errNotMyType)
 	}
@@ -171,7 +171,7 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.ExternalUpdate, error) {
-	cr, ok := mg.(*v1alpha1.MyType)
+	cr, ok := mg.(*v1alpha1.Database)
 	if !ok {
 		return managed.ExternalUpdate{}, errors.New(errNotMyType)
 	}
@@ -186,7 +186,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 }
 
 func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
-	cr, ok := mg.(*v1alpha1.MyType)
+	cr, ok := mg.(*v1alpha1.Database)
 	if !ok {
 		return errors.New(errNotMyType)
 	}

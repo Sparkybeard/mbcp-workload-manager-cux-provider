@@ -1,3 +1,4 @@
+
 /*
 Copyright 2020 The Crossplane Authors.
 
@@ -25,58 +26,58 @@ import (
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-// ApplicationParameters are the configurable fields of a Application.
-type ApplicationParameters struct {
+// DatabaseParameters are the configurable fields of a Database.
+type DatabaseParameters struct {
 	ConfigurableField string `json:"configurableField"`
 }
 
-// ApplicationObservation are the observable fields of a Application.
-type ApplicationObservation struct {
+// DatabaseObservation are the observable fields of a Database.
+type DatabaseObservation struct {
 	ObservableField string `json:"observableField,omitempty"`
 }
 
-// An ApplicationSpec defines the desired state of a Application.
-type ApplicationSpec struct {
+// An DatabaseSpec defines the desired state of a Database.
+type DatabaseSpec struct {
 	xpv1.ResourceSpec `json:",inline"`
-	ForProvider       ApplicationParameters `json:"forProvider"`
+	ForProvider       DatabaseParameters `json:"forProvider"`
 }
 
-// An ApplicationStatus represents the observed state of a Application.
-type ApplicationStatus struct {
+// An DatabaseStatus represents the observed state of a Database.
+type DatabaseStatus struct {
 	xpv1.ResourceStatus `json:",inline"`
-	AtProvider          ApplicationObservation `json:"atProvider,omitempty"`
+	AtProvider          DatabaseObservation `json:"atProvider,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// A Application is an example API type.
+// A Database is an example API type.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,template}
-type Application struct {
+type Database struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ApplicationSpec   `json:"spec"`
-	Status ApplicationStatus `json:"status,omitempty"`
+	Spec   DatabaseSpec   `json:"spec"`
+	Status DatabaseStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// ApplicationList contains a list of Application
-type ApplicationList struct {
+// DatabaseList contains a list of Database
+type DatabaseList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Application `json:"items"`
+	Items           []Database `json:"items"`
 }
 
-// Application type metadata.
+// Database type metadata.
 var (
-	ApplicationKind             = reflect.TypeOf(Application{}).Name()
-	ApplicationGroupKind        = schema.GroupKind{Group: Group, Kind: ApplicationKind}.String()
-	ApplicationKindAPIVersion   = ApplicationKind + "." + SchemeGroupVersion.String()
-	ApplicationGroupVersionKind = SchemeGroupVersion.WithKind(ApplicationKind)
+	DatabaseKind             = reflect.TypeOf(Database{}).Name()
+	DatabaseGroupKind        = schema.GroupKind{Group: Group, Kind: DatabaseKind}.String()
+	DatabaseKindAPIVersion   = DatabaseKind + "." + SchemeGroupVersion.String()
+	DatabaseGroupVersionKind = SchemeGroupVersion.WithKind(DatabaseKind)
 )

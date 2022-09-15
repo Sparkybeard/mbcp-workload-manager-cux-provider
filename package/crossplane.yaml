@@ -4,7 +4,7 @@ metadata:
   name: workload-manager-provider
   annotations:
     meta.crossplane.io/maintainer: Crossplane Maintainers <info@crossplane.io>
-    meta.crossplane.io/source: github.com/crossplane/workload-manager-provider
+    meta.crossplane.io/source: github.com/Sparkybeard/workload-manager-provider
     meta.crossplane.io/license: Apache-2.0
     meta.crossplane.io/description: |
       A template that can be used to create Crossplane providers.

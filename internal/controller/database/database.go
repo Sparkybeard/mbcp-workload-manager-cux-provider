@@ -50,11 +50,11 @@ const (
 // A NoOpService does nothing.
 type NoOpService struct{}
 
+var basepath = "http://localhost:5000/api/rpc"
+
 var (
 	newNoOpService = func(_ []byte) (interface{}, error) { return &NoOpService{}, nil }
 )
-
-var basePath = "http://localhost:5000/api/rpc"
 
 // Setup adds a controller that reconciles MyType managed resources.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
@@ -110,19 +110,24 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 		return nil, errors.Wrap(err, errGetPC)
 	}
 
+	/*
 	cd := pc.Spec.Credentials
 	data, err := resource.CommonCredentialExtractor(ctx, cd.Source, c.kube, cd.CommonCredentialSelectors)
 	if err != nil {
 		return nil, errors.Wrap(err, errGetCreds)
 	}
 
-	svc, err := wmclient.NewClient(wmclient.Options{ ApiUrl: basePath, Verbose: true})
-	wmclient.
+	svc, err := c.(data)
 	if err != nil {
 		return nil, errors.Wrap(err, errNewClient)
 	}
+	*/
 
-
+	svc, err := wmclient.NewClient(wmclient.Options{ ApiUrl: basepath, Verbose: true})
+	if err != nil {
+		return nil, errors.Wrap(err, errNewClient)
+	}
+	
 
 	return &external{service: svc}, nil
 }

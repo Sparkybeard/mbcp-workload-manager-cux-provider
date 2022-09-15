@@ -46,7 +46,7 @@ type DeleteDbResponse struct {
 	Id				string
 }
 
-func newClient(ops Options) (*client, error) {
+func NewClient(ops Options) (*client, error) {
 	tr := &http.Transport{
 		MaxIdleConns: 10,
 		IdleConnTimeout: 30 * time.Second,
@@ -63,7 +63,7 @@ func newClient(ops Options) (*client, error) {
 	}, nil
 }
 
-func (c *client) instanciateDB(ctx context.Context, ops Options, db database) (InstanciateDBResponse, error) {
+func (c *client) InstanciateDB(ctx context.Context, ops Options, db database) (InstanciateDBResponse, error) {
 	var result InstanciateDBResponse
 	databaseJson, err := json.Marshal(db)
 	if err != nil {
@@ -90,7 +90,7 @@ func (c *client) instanciateDB(ctx context.Context, ops Options, db database) (I
 	return result, fmt.Errorf("failed to instanciate database %+v: %w", db, err)
 }
 
-func (c *client) getDB(ctx context.Context, ops Options, db database) (GetDbResponse, error) {
+func (c *client) GetDB(ctx context.Context, ops Options, db database) (GetDbResponse, error) {
 	var result GetDbResponse
 	databaseJson, err := json.Marshal(db)
 	if err != nil {
@@ -113,7 +113,7 @@ func (c *client) getDB(ctx context.Context, ops Options, db database) (GetDbResp
 	return result, nil
 }
 
-func (c *client) deleteDB(ctx context.Context, ops Options, db database) (DeleteDbResponse, error) {
+func (c *client) DeleteDB(ctx context.Context, ops Options, db database) (DeleteDbResponse, error) {
 	var result DeleteDbResponse 
 	databaseJson, err := json.Marshal(db)
 	if err != nil {

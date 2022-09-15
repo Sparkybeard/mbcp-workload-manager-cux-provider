@@ -1,10 +1,11 @@
-module github.com/crossplane/provider-template
+module github.com/Sparkybeard/mbcp-workload-manager-cux-provider
 
 go 1.17
 
 require (
 	github.com/crossplane/crossplane-runtime v0.17.0
 	github.com/crossplane/crossplane-tools v0.0.0-20220310165030-1f43fc12793e
+	github.com/crossplane/provider-template v0.0.0-20220822164548-04b9983974de
 	github.com/google/go-cmp v0.5.6
 	github.com/pkg/errors v0.9.1
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
@@ -13,6 +14,8 @@ require (
 	sigs.k8s.io/controller-runtime v0.11.0
 	sigs.k8s.io/controller-tools v0.8.0
 )
+
+require github.com/google/go-querystring v1.0.0 // indirect
 
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
@@ -34,6 +37,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/google/go-github/v32 v32.1.0
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/googleapis/gnostic v0.5.5 // indirect

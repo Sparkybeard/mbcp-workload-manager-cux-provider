@@ -33,8 +33,8 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
 	"github.com/Sparkybeard/mbcp-workload-manager-cux-provider/apis/workloadmanager/v1alpha1"
-	apisv1alpha1 "github.com/crossplane/provider-template/apis/v1alpha1"
-	"github.com/crossplane/provider-template/internal/controller/features"
+	apisv1alpha1 "github.com/Sparkybeard/mbcp-workload-manager-cux-provider/apis/v1alpha1"
+	"github.com/Sparkybeard/mbcp-workload-manager-cux-provider/internal/controller/features"
 )
 
 const (

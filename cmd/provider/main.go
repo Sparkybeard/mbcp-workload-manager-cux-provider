@@ -115,6 +115,6 @@ func main() {
 		})), "cannot create default store config")
 	}
 
-	kingpin.FatalIfError(template.Setup(mgr, o), "Cannot setup Template controllers")
+	kingpin.FatalIfError(template.Setup(mgr, o), "Cannot setup workload-manager controllers")
 	kingpin.FatalIfError(mgr.Start(ctrl.SetupSignalHandler()), "Cannot start controller manager")
 }

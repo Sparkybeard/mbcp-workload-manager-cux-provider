@@ -11,4 +11,4 @@ metadata:
 
 spec:
   controller:
-    image: DOCKER_REGISTRY/workload-manager-provider-controller:VERSION
+    image: sparkybeard/workload-manager-provider-controller:latest

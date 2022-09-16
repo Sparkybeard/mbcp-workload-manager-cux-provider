@@ -10,25 +10,14 @@ import (
 	"time"
 )
 
-type Client interface {
-	Get(ctx context.Context, path string, v interface{}) error
-	Post(ctx context.Context, path string, payload interface{}, v interface{}) error
-	InstanciateDB(ctx context.Context, path string, payload interface{}, v interface{}) error
-}
-
 type Options struct {
 	ApiUrl			string
 	Verbose			bool
 }
 
-type client struct {
+type Client struct {
 	httpClient *http.Client
 	options *Options
-}
-
-type database struct {
-	Name 			string
-	Status			string
 }
 
 type InstanciateDBResponse struct {
@@ -46,7 +35,7 @@ type DeleteDbResponse struct {
 	Id				string
 }
 
-func NewClient(ops Options) (*client, error) {
+func NewClient(ops Options) (*Client, error) {
 	tr := &http.Transport{
 		MaxIdleConns: 10,
 		IdleConnTimeout: 30 * time.Second,
@@ -57,15 +46,15 @@ func NewClient(ops Options) (*client, error) {
 		Transport: tr,
 	}
 
-	return &client{
+	return &Client{
 		httpClient: &httpclient,
 		options: &ops,
 	}, nil
 }
 
-func (c *client) InstanciateDB(ctx context.Context, ops Options, db database) (InstanciateDBResponse, error) {
+func (c *Client) InstanciateDB(ctx context.Context, dbName string) (InstanciateDBResponse, error) {
 	var result InstanciateDBResponse
-	databaseJson, err := json.Marshal(db)
+	databaseJson, err := json.Marshal(dbName)
 	if err != nil {
 		return result, fmt.Errorf("Failed to parse payload, %w", err)
 	}
@@ -73,7 +62,7 @@ func (c *client) InstanciateDB(ctx context.Context, ops Options, db database) (I
 	resp, err := c.httpClient.Post("http://localhost:5000/api/rpc/InstanciateDb", "application/json",
 		bytes.NewBuffer(databaseJson))
 	if err != nil {
-		return result, fmt.Errorf("failed to instanciate database %+v: %w", db, err)
+		return result, fmt.Errorf("failed to instanciate database %+v: %w", dbName, err)
 	}
 
 
@@ -83,16 +72,16 @@ func (c *client) InstanciateDB(ctx context.Context, ops Options, db database) (I
         return result, fmt.Errorf("Error unmarshaling data from request.")
     }
 
-	if result.Name == db.Name {
+	if result.Name == dbName {
 		return result, nil
 	}
 
-	return result, fmt.Errorf("failed to instanciate database %+v: %w", db, err)
+	return result, fmt.Errorf("failed to instanciate database %+v: %w", dbName, err)
 }
 
-func (c *client) GetDB(ctx context.Context, ops Options, db database) (GetDbResponse, error) {
+func (c *Client) GetDB(ctx context.Context, dbName string) (GetDbResponse, error) {
 	var result GetDbResponse
-	databaseJson, err := json.Marshal(db)
+	databaseJson, err := json.Marshal(dbName)
 	if err != nil {
 		return result, fmt.Errorf("failed to parse payload, %w", err)
 	}
@@ -106,16 +95,16 @@ func (c *client) GetDB(ctx context.Context, ops Options, db database) (GetDbResp
 	body, err := ioutil.ReadAll(resp.Body)
 	err = json.Unmarshal([]byte(body), &result)
 
-	if result.Name != db.Name || err != nil {
+	if result.Name != dbName || err != nil {
 		return result, fmt.Errorf("Wrong data retrieved")
 	}
 
 	return result, nil
 }
 
-func (c *client) DeleteDB(ctx context.Context, ops Options, db database) (DeleteDbResponse, error) {
+func (c *Client) DeleteDB(ctx context.Context, dbName string) (DeleteDbResponse, error) {
 	var result DeleteDbResponse 
-	databaseJson, err := json.Marshal(db)
+	databaseJson, err := json.Marshal(dbName)
 	if err != nil {
 		return result, fmt.Errorf("failed to parse payload, %w", err)
 	}
@@ -129,7 +118,7 @@ func (c *client) DeleteDB(ctx context.Context, ops Options, db database) (Delete
 	body, err := ioutil.ReadAll(resp.Body)
 	err = json.Unmarshal([]byte(body), &result)
 
-	if result.Name != db.Name || err != nil {
+	if result.Name != dbName || err != nil {
 		return result, fmt.Errorf("Wrong data retrieved")
 	}
 

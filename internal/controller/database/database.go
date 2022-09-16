@@ -127,7 +127,6 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if err != nil {
 		return nil, errors.Wrap(err, errNewClient)
 	}
-	
 
 	return &external{service: svc}, nil
 }
@@ -137,7 +136,7 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 type external struct {
 	// A 'client' used to connect to the external resource API. In practice this
 	// would be something like an AWS SDK client.
-	service interface{}
+	service *wmclient.Client
 }
 
 func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.ExternalObservation, error) {
@@ -146,8 +145,16 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		return managed.ExternalObservation{}, errors.New(errNotMyType)
 	}
 
-	// These fmt statements should be removed in the real implementation.
-	fmt.Printf("Observing: %+v", cr)
+	database, err := c.service.GetDB(ctx, cr.Name)
+	if err != nil {
+		return managed.ExternalObservation{}, errors.New(errGetCreds)
+	}
+
+	upToDate := true
+
+	if database.Name == "" {
+		upToDate = false
+	}
 
 	return managed.ExternalObservation{
 		// Return false when the external resource does not exist. This lets
@@ -158,7 +165,7 @@ func (c *external) Observe(ctx context.Context, mg resource.Managed) (managed.Ex
 		// Return false when the external resource exists, but it not up to date
 		// with the desired managed resource state. This lets the managed
 		// resource reconciler know that it needs to call Update.
-		ResourceUpToDate: true,
+		ResourceUpToDate: upToDate,
 
 		// Return any details that may be required to connect to the external
 		// resource. These will be stored as the connection secret.
@@ -173,12 +180,16 @@ func (c *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	}
 
 	fmt.Printf("Creating: %+v", cr)
-
+	_, err := c.service.InstanciateDB(ctx, cr.Name)
+	if err != nil {
+		return managed.ExternalCreation{}, errors.New(errGetCreds)
+	}
+	
 	return managed.ExternalCreation{
 		// Optionally return any details that may be required to connect to the
 		// external resource. These will be stored as the connection secret.
 		ConnectionDetails: managed.ConnectionDetails{},
-	}, nil
+	}, err
 }
 
 func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.ExternalUpdate, error) {
@@ -188,6 +199,7 @@ func (c *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 	}
 
 	fmt.Printf("Updating: %+v", cr)
+
 
 	return managed.ExternalUpdate{
 		// Optionally return any details that may be required to connect to the
@@ -203,6 +215,10 @@ func (c *external) Delete(ctx context.Context, mg resource.Managed) error {
 	}
 
 	fmt.Printf("Deleting: %+v", cr)
+	_, err := c.service.DeleteDB(ctx, cr.Name)
+	if err != nil {
+		return errors.New(errGetPC)
+	}
 
 	return nil
 }

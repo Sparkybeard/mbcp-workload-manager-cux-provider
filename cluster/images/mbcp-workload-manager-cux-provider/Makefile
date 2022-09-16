@@ -6,9 +6,12 @@ include ../../../build/makelib/common.mk
 
 # ====================================================================================
 #  Options
-DOCKER_REGISTRY ?= crossplane
+DOCKER_REGISTRY ?= sparkybeard
 IMAGE = $(BUILD_REGISTRY)/workload-manager-provider-$(ARCH)
 OSBASEIMAGE = scratch
+
+ORG_NAME=sparkybeard
+PROVIDER_NAME=workload-manager-provider-$(ARCH)
 include ../../../build/makelib/image.mk
 
 # ====================================================================================
@@ -28,3 +31,6 @@ img.build:
 		-t $(IMAGE) \
 		$(IMAGE_TEMP_DIR) || $(FAIL)
 	@$(OK) docker build $(IMAGE)
+
+image-push:
+	docker push $(ORG_NAME)/$(PROVIDER_NAME):latest
